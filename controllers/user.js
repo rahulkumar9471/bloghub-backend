@@ -1,5 +1,7 @@
+const emailVarificationToken = require('../models/emailVarificationToken');
 const User = require('../models/user');
 const { sendError } = require('../utils/helper');
+const { generateOTP } = require('../utils/mail');
 
 
 exports.Signup = async (req, res) => {
@@ -23,15 +25,15 @@ exports.Signup = async (req, res) => {
 
         const response = await newUser.save();
 
-        res.status(201).json({
-            user: {
-                id: newUser._id,
-                name: newUser.name,
-                email: newUser.email,
-                mobile: newUser.mobile
-            },
-            message: "Account Created Successfully.",
-        });
+        let otp = generateOTP();
+
+        const newEmailVarificationToken = new emailVarificationToken({
+            owner: newUser._id,
+            token: otp
+        })
+
+        await newEmailVarificationToken.save();
+
 
     } catch (err) {
         console.error("Error in signup", err.message);
