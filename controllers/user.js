@@ -111,3 +111,38 @@ exports.emailverify = async (req, res) => {
     return sendError(res, "Internal server error", 500);
   }
 }
+
+exports.signin = async (req, res) => {
+  const { username, password } = req.body;
+
+  try{
+
+    const user = await User.findOne({ email: username });
+
+    if(!user) return sendError(res, "User Not Found", 404);
+
+    const matched = await user.comparePassword(password);
+
+    if(!matched) return sendError(res, "Invalid Credentials", 401);
+
+    const { _id, name } = user;
+
+    const jwtToken = jwt.sign({userId: user._id}, process.env.JWT_SECRET);
+
+    res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        mobile: user.mobile,
+        token: jwtToken
+      },
+      message: "Your Account has been successfully signed."
+    })
+
+  }catch(err){
+    console.error("Error in signin:", error);
+    return sendError(res, "Internal server error", 500);
+  }
+
+}
