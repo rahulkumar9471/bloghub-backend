@@ -13,7 +13,7 @@ const emailVerificationTokenSchema = mongoose.Schema({
   },
   createAt: {
     type: Date,
-    expires: 3600,
+    expires: 600,
     default: Date.now(),
   },
 });

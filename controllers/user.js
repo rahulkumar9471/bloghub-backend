@@ -112,6 +112,53 @@ exports.emailverify = async (req, res) => {
   }
 }
 
+exports.resendEmailVerificationToken = async (req, res) => {
+  const { userId } = req.body;
+
+  try{
+
+    if(!isValidObjectId(userId)) return sendError(res, "Invalid User !");
+
+    const user = await User.findById(userId);
+
+    if(!user) return sendError(res, "User not found", 404);
+
+    if(user.isVerified) return sendError(res, "This email has already been verified");
+
+    const alreadyHasToken = await EmailVerificationToken.findOne({
+      owner: userId
+    });
+
+    if(alreadyHasToken) return sendError(res, "Only after 10 minutes you can request for another token");
+
+    let otp = generateOTP();
+
+    const newEmailVerificationToken = new EmailVerificationToken({
+      owner: user._id,
+      token: otp,
+    })
+
+    await newEmailVerificationToken.save();
+
+    var transport = generateMailTransport();
+
+    transport.sendMail({
+      from: "bloghub.co",
+      to: user.email,
+      subject: "BlogHub OTP Verification",
+      html: `Hi ${user.name},<br><br>Your OTP is <b>${otp}</b><br><br>If you did not make this request, please ignore this email.<br><br>Regards,<br>BlogHub Team`,
+    })
+
+    res.status(201).json({
+      message: "New OTP has been sent to your registered email account."
+    })
+
+  }catch (error) {
+    console.error("Error in Resend token:", error);
+    return sendError(res, "Internal server error", 500);
+  }
+}
+
 exports.signin = async (req, res) => {
   const { username, password } = req.body;
 
