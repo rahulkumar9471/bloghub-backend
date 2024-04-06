@@ -28,6 +28,6 @@ exports.validate = (req, res, next) => {
 };
 
 exports.signInValidator = [
-  check("username").normalizeEmail().isEmail().withMessage("Email is Invalid !"),
+  check("email").normalizeEmail().isEmail().withMessage("Email is Invalid !"),
   check("password").trim().not().isEmpty().withMessage("Password is Missing")
 ]

@@ -91,7 +91,7 @@ exports.emailverify = async (req, res) => {
       from: "bloghub.co",
       to: user.email,
       subject: "Welcome Email",
-      html: `Hi ${user.name},<br><br><h1>Welcome to our App and Thanks for choosing us. </h1></b><br><br>If you did not make this request, please ignore this email.<br><br>Regards,<br>BlogHub Team`,
+      html: `Hi ${user.name},<br><br><h1>Welcome to our App and Thanks for choosing us. </h1></b><br><br>If you did not make this request, please Inform BlogHub Team and reset your password.<br><br>Regards,<br>BlogHub Team`,
     })
 
     const jwtToken = jwt.sign({userId: user._id}, process.env.JWT_SECRET);
@@ -160,11 +160,11 @@ exports.resendEmailVerificationToken = async (req, res) => {
 }
 
 exports.signin = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try{
 
-    const user = await User.findOne({ email: username });
+    const user = await User.findOne({ email });
 
     if(!user) return sendError(res, "User Not Found", 404);
 
@@ -172,9 +172,9 @@ exports.signin = async (req, res) => {
 
     if(!matched) return sendError(res, "Invalid Credentials", 401);
 
-    const { _id, name } = user;
+    const { _id } = user;
 
-    const jwtToken = jwt.sign({userId: user._id}, process.env.JWT_SECRET);
+    const jwtToken = jwt.sign({userId: _id}, process.env.JWT_SECRET);
 
     res.json({
       user: {
@@ -188,7 +188,7 @@ exports.signin = async (req, res) => {
     })
 
   }catch(err){
-    console.error("Error in signin:", error);
+    console.error("Error in signin:", err);
     return sendError(res, "Internal server error", 500);
   }
 
