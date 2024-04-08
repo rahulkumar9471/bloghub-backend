@@ -103,7 +103,7 @@ exports.emailverify = async (req, res) => {
         mobile: user.mobile,
         token: jwtToken
       },
-      message: "Your Account has been successfully signed."
+      message: "Your Account has been successfully verified."
     })
 
   }catch (error) {
@@ -160,6 +160,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
 }
 
 exports.signin = async (req, res) => {
+  
   const { email, password } = req.body;
 
   try{
