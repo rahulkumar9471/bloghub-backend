@@ -7,8 +7,8 @@ exports.userValidator = [
     .not()
     .isEmpty()
     .withMessage("Mobile No. is Missing")
-    .matches(/^\d{10}$/)
-    .withMessage("Mobile No. must be 10 digits"),
+    .matches(/^[6-9]\d{9}$/)
+    .withMessage("Invalid mobile number!"),
 
   check("password")
     .trim()

@@ -2,8 +2,9 @@ const { isValidObjectId } = require("mongoose");
 const jwt = require("jsonwebtoken");
 const EmailVerificationToken = require("../models/emailVerificationToken");
 const User = require("../models/user");
-const { sendError } = require("../utils/helper");
+const { sendError, generateRandomByte } = require("../utils/helper");
 const { generateOTP, generateMailTransport } = require("../utils/mail"); 
+const passwordResetToken = require("../models/passwordResetToken");
 
 exports.Signup = async (req, res) => {
   const { name, email, mobile, password } = req.body;
@@ -58,7 +59,7 @@ exports.Signup = async (req, res) => {
   }
 };
 
-exports.emailverify = async (req, res) => {
+exports.emailVerify = async (req, res) => {
   const { userId, otp } = req.body;
 
   try{
@@ -129,7 +130,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
       owner: userId
     });
 
-    if(alreadyHasToken) return sendError(res, "Only after 10 minutes you can request for another token");
+    if(alreadyHasToken) return sendError(res, "Only after 60 minutes you can request for another token");
 
     let otp = generateOTP();
 
@@ -159,7 +160,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
   }
 }
 
-exports.signin = async (req, res) => {
+exports.signIn = async (req, res) => {
   
   const { email, password } = req.body;
 
@@ -193,4 +194,54 @@ exports.signin = async (req, res) => {
     return sendError(res, "Internal server error", 500);
   }
 
+}
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    if(!email) return sendError(res, "Email is required");
+
+    const user = await User.findOne({ email: email});
+
+    if(!user) return sendError(res, "User not found", 404);
+
+    const alreadyHasToken = await passwordResetToken.findOne({
+      owner: user._id
+    })
+
+    if(alreadyHasToken) return sendError(res, "Only after 60 minutes you can request for another token");
+
+    const token = await generateRandomByte();
+
+    const newPasswordResetToken = await passwordResetToken({
+      owner: user._id,
+      token,
+    });
+
+    await newPasswordResetToken.save();
+
+    const resetPasswordUrl = `http://localhost:3000/auth/reset-password?token=${token}&id=${user._id}`;
+
+    const transport = generateMailTransport();
+
+    transport.sendMail({
+      from: "bloghub.co",
+      to: user.email,
+      subject: "BlogHub Password Reset",
+      html: `Hi ${user.name},<br><br>You are receiving this email because you (or someone else) have requested the reset of the password for your account.<br><br>Please click on the following link, or paste this into your browser to complete the process:<br><br><a href="${resetPasswordUrl}">change password</a><br><br>If you did not make this request, please ignore this email.<br><br>Regards,<br>BlogHub Team`,
+    })
+
+    res.status(201).json({
+      message: "Link sent to your registered email account."
+    })
+
+  } catch (error) {
+    console.error("Error in forgetPassword:", error);
+    return sendError(res, "Internal server error", 500);
+  }
+}
+
+exports.sendResetPasswordTokenStatus = (req, res) => {
+  res.json({ valid: true});
 }
