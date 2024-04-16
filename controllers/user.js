@@ -102,9 +102,10 @@ exports.emailVerify = async (req, res) => {
         name: user.name,
         email: user.email,
         mobile: user.mobile,
-        token: jwtToken
+        token: jwtToken,
+        isVerified: user.isVerified
       },
-      message: "Your Account has been successfully verified."
+      message: "Your Email is successfully verified."
     })
 
   }catch (error) {
@@ -184,7 +185,8 @@ exports.signIn = async (req, res) => {
         name: user.name,
         email: user.email,
         mobile: user.mobile,
-        token: jwtToken
+        token: jwtToken,
+        isVerified: user.isVerified
       },
       message: "Your Account has been successfully signed."
     })
@@ -244,4 +246,40 @@ exports.forgotPassword = async (req, res) => {
 
 exports.sendResetPasswordTokenStatus = (req, res) => {
   res.json({ valid: true});
+}
+
+exports.resetPassword = async (req, res) => {
+  const { newPassword, userId } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+
+    const matched = await user.comparePassword(newPassword);
+
+    if(matched) return sendError(res, "This new password must be different from the old password");
+
+    user.password = newPassword;
+
+    await user.save();
+
+    await passwordResetToken.findByIdAndDelete(req.resetToken._id);
+
+    const transport = generateMailTransport();
+
+    transport.sendMail({
+      from: "bloghub.co",
+      to: user.email,
+      subject: "BlogHub Password Reset",
+      html: `Hi ${user.name},<br><br>Your password has been changed.<br><br>If you did not make this request, please ignore this email.<br><br>Regards,<br>BlogHub Team`,
+    })
+
+    res.json({
+      message: "Password Reset Successfully, Now you can use new Password.",
+    });
+
+  } catch (error) {
+        console.error("Error resetting password:", error);
+    sendError(res, "An error occurred while resetting the password.", 500);
+  }
+
 }
