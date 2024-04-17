@@ -184,7 +184,8 @@ exports.signIn = async (req, res) => {
         name: user.name,
         email: user.email,
         mobile: user.mobile,
-        token: jwtToken
+        token: jwtToken,
+        isVerified: user.isVerified
       },
       message: "Your Account has been successfully signed."
     })

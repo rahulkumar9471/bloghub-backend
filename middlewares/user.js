@@ -3,7 +3,7 @@ const { sendError } = require("../utils/helper");
 const passwordResetToken = require("../models/passwordResetToken");
 
 exports.isValidPasswordResetToken = async (req, res, next) => {
-    const { token, userId } = req.body;
+    const { token, userId } = req.body; 
 
     try {
         if(!token.trim() || !isValidObjectId(userId)) return sendError(res, "Invalid request");

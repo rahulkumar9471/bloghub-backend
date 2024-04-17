@@ -17,7 +17,8 @@ router.get("/user/isAuth", isAuth, (req, res) => {
         user: {
             id: user._id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            isVerified: user.isVerified
         }
     })
 });
