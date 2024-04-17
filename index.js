@@ -1,4 +1,5 @@
 const express = require('express');
+const { errorHandler } = require("./middlewares/error");
 require('./db/connection').connect();
 var cors = require('cors')
 require('dotenv').config();
@@ -14,6 +15,8 @@ const PORT = process.env.PORT || 8000
 
 app.use('/api/v1',userRouter);
 app.use('/api/v1',authorRouter);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log('app listening on port ' + PORT);

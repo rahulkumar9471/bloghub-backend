@@ -41,3 +41,9 @@ exports.signInValidator = [
   check("email").normalizeEmail().isEmail().withMessage("Email is Invalid !"),
   check("password").trim().not().isEmpty().withMessage("Password is Missing")
 ]
+
+exports.authorInfoValidator = [
+  check("name").trim().not().isEmpty().withMessage("Author name is Missing!"),
+  check("about").trim().not().isEmpty().withMessage("About is Required field!"),
+  check("gender").trim().not().isEmpty().withMessage("Gender is Required field!"),
+]
