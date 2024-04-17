@@ -6,7 +6,7 @@ exports.isValidPasswordResetToken = async (req, res, next) => {
     const { token, userId } = req.body; 
 
     try {
-        if(!token.trim() || !isValidObjectId(userId)) return sendError(res, "Invalid request");
+        if(!token || !isValidObjectId(userId)) return sendError(res, "Invalid request");
 
         const resetToken = await passwordResetToken.findOne({
             owner: userId
