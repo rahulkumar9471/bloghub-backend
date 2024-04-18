@@ -25,4 +25,6 @@ const authorSchema = mongoose.Schema({
     { timestamps: true }
 )
 
+authorSchema.index({name: 'text'})
+
 module.exports = mongoose.model('Author', authorSchema)

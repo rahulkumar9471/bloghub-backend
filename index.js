@@ -13,8 +13,8 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 8000
 
-app.use('/api/v1',userRouter);
-app.use('/api/v1',authorRouter);
+app.use('/api/v1', userRouter);
+app.use('/api/v1', authorRouter);
 
 app.use(errorHandler);
 

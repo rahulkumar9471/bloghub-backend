@@ -108,8 +108,8 @@ exports.emailVerify = async (req, res) => {
       message: "Your Email is successfully verified."
     })
 
-  }catch (error) {
-    console.error("Error in verifyEmail:", error);
+  }catch (err) {
+    console.error("Error in verifyEmail:", err);
     return sendError(res, "Internal server error", 500);
   }
 }
@@ -155,8 +155,8 @@ exports.resendEmailVerificationToken = async (req, res) => {
       message: "New OTP has been sent to your registered email account."
     })
 
-  }catch (error) {
-    console.error("Error in Resend token:", error);
+  }catch (err) {
+    console.error("Error in Resend token:", err);
     return sendError(res, "Internal server error", 500);
   }
 }
