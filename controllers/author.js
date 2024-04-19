@@ -1,6 +1,6 @@
 const { isValidObjectId } = require("mongoose");
 const Author = require("../models/author");
-const { sendError, uploadImageToCloud } = require("../utils/helper")
+const { sendError, uploadImageToCloud, formatAuthor } = require("../utils/helper")
 const cloudinary = require("../cloud");
 
 
@@ -14,13 +14,7 @@ exports.create = async (req, res) => {
       newAuthor.avatar = { url, public_id };
     }
     await newAuthor.save();
-    res.status(200).json({
-      id: newAuthor._id,
-      name,
-      about,
-      gender,
-      avatar: newAuthor.avatar?.url
-    });
+    res.status(200).json(formatAuthor(newAuthor));
   } catch (error) {
     console.error("Error in Author creating", error.message);
     return sendError(res, "Internal Server Error", 500);
@@ -56,13 +50,7 @@ exports.updateAuthor = async (req, res) => {
     author.gender = gender;
 
     await author.save();
-    res.status(200).json({
-      id: author._id,
-      name,
-      about,
-      gender,
-      avatar: author.avatar?.url
-    });
+    res.status(200).json(formatAuthor(author));
 
   } catch (error) {
     console.error("Error in Author Updating", error.message);
@@ -102,7 +90,10 @@ exports.searchAuthor = async (req, res) => {
   const { query } = req;
   try {
     const result = await Author.find({ $text: { $search: `"${query.name}"` } })
-    res.json(result)
+
+    const actors = result.map(actor => formatAuthor(actor));
+    
+    res.json(actors)
 
   } catch (error) {
     console.error("Error in Search Author", error.message);
@@ -113,7 +104,9 @@ exports.searchAuthor = async (req, res) => {
 exports.latestAuthor = async (req, res) => {
   try {
     const result = await Author.find().sort({ createdAt: -1 }).limit(12);
-    res.json(result);
+    const author = result.map(author => formatAuthor(author));
+    
+    res.json(author)
   } catch (error) {
     console.error("Error in latest Author", error.message);
     res.status(500).json({ error: "Internal Server Error" });
@@ -129,7 +122,7 @@ exports.author = async (req, res) => {
 
     if (!author) return sendError(res, "Invalid Request, Author not Found.", 404);
 
-    res.json(author);
+    res.json(formatAuthor(author));
 
   } catch (error) {
     console.error("Error in Author", error.message);

@@ -185,6 +185,7 @@ exports.signIn = async (req, res) => {
         name: user.name,
         email: user.email,
         mobile: user.mobile,
+        role: user.role,
         token: jwtToken,
         isVerified: user.isVerified
       },
