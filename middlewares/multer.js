@@ -9,11 +9,12 @@ const imageFileFilter = (req, file, cb) => {
 }
 
 const pdfFileFilter = (req, file, cb) => {
-    if (!file.mimetype.startsWith('pdf')) {
+    if (!file.mimetype.startsWith('application/pdf')) {
         cb('Supported only PDF files', false);
     }
-    cb(null, true)
-}
+    cb(null, true);
+};
+
 
 exports.uploadImage = multer({ storage, fileFilter: imageFileFilter })
 exports.uploadPdf = multer({ storage, fileFilter: pdfFileFilter })
