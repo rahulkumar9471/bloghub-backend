@@ -11,11 +11,11 @@ const blogSchema = mongoose.Schema({
         type: String,
         trim: true,
         required: true
-    },
-    author: {
+      },
+      author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Author"
-    },
+      },
     publishDate: {
         type: Date,
         required: true

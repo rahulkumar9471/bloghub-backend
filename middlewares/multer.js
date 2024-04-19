@@ -1,11 +1,19 @@
 const multer = require('multer');
 const storage = multer.diskStorage({});
 
-const fileFilter = (req, file, cb) => {
-    if(!file.mimetype.startsWith('image')){
+const imageFileFilter = (req, file, cb) => {
+    if (!file.mimetype.startsWith('image')) {
         cb('Supported only image files', false);
     }
     cb(null, true)
 }
 
-exports.uploadImage = multer({storage, fileFilter})
+const pdfFileFilter = (req, file, cb) => {
+    if (!file.mimetype.startsWith('pdf')) {
+        cb('Supported only PDF files', false);
+    }
+    cb(null, true)
+}
+
+exports.uploadImage = multer({ storage, fileFilter: imageFileFilter })
+exports.uploadPdf = multer({ storage, fileFilter: pdfFileFilter })
