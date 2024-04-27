@@ -53,7 +53,7 @@ exports.authorInfoValidator = [
 exports.validateBlog = [
   check("blog").trim().not().isEmpty().withMessage("Blog Title is Missing!"),
   check("description").trim().not().isEmpty().withMessage("Blog Description is Missing!"),
-  check("publishDate").isDate.withMessage("Blog Publish Date is Missing!"),
+  check("publishDate").isDate().withMessage("Blog Publish Date is Missing!"),
   check("status").isIn(["public", "draft"]).withMessage("Blog status must be public or draft!"),
   check("type").trim().not().isEmpty().withMessage("Blog Type is Missing!"),
   check("genres").isArray().withMessage("Blog Genres must be an array!").custom((value) => {
@@ -70,7 +70,7 @@ exports.validateBlog = [
   }),
   check("cast").isArray().withMessage("Cast must be an array of objects!").custom((cast) => {
     for (let c of cast) {
-      if (!isValidObjectId(c.id)) throw Error("Invalid cast id inside cast!");
+      if (!isValidObjectId(c.author)) throw Error("Invalid cast id inside cast!");
       if (!c.roleAs?.trim()) throw Error("Role as is missing inside cast!");
       if (typeof c.leadAuthor !== 'boolean') throw Error("Only accepted boolean value inside leadAuthor inside cast!");
     }

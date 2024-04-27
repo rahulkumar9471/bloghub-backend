@@ -30,3 +30,13 @@ exports.formatAuthor = author => {
         avatar: avatar?.url
     }
 }
+
+exports.parseData = (req, res, next) => {
+    const { pdf, cast, genres, tags, writers } = req.body;
+    if(pdf) req.body.pdf = JSON.parse(pdf);
+    if(cast) req.body.cast = JSON.parse(cast);
+    if(genres) req.body.genres = JSON.parse(genres);
+    if(tags) req.body.tags = JSON.parse(tags);
+    if(writers) req.body.pdf = JSON.parse(writers);
+    next();
+}
