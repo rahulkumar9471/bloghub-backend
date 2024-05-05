@@ -62,6 +62,7 @@ const blogSchema = mongoose.Schema(
         type: String,
         required: true,
       },
+      responsive: [URL],
       required: true,
     },
     pdf: {

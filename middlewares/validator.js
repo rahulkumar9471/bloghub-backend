@@ -51,7 +51,7 @@ exports.authorInfoValidator = [
 ]
 
 exports.validateBlog = [
-  check("blog").trim().not().isEmpty().withMessage("Blog Title is Missing!"),
+  check("title").trim().not().isEmpty().withMessage("Blog Title is Missing!"),
   check("description").trim().not().isEmpty().withMessage("Blog Description is Missing!"),
   check("publishDate").isDate().withMessage("Blog Publish Date is Missing!"),
   check("status").isIn(["public", "draft"]).withMessage("Blog status must be public or draft!"),
@@ -91,10 +91,10 @@ exports.validateBlog = [
       throw Error("PDF URL is invalid");
     }
   }),
-  check("thumbnail").custom((_, { req }) => {
-    if (!req.file) throw Error("Thumbnail is missing");
-    return true;
-  })
+  // check("thumbnail").custom((_, { req }) => {
+  //   if (!req.file) throw Error("Thumbnail is missing");
+  //   return true;
+  // })
 
 
 ]
