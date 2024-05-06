@@ -50,6 +50,7 @@ exports.Signup = async (req, res) => {
         name: newUser.name,
         email: newUser.email,
         mobile: newUser.mobile,
+        role: newUser.role
       },
     });
 
@@ -103,7 +104,8 @@ exports.emailVerify = async (req, res) => {
         email: user.email,
         mobile: user.mobile,
         token: jwtToken,
-        isVerified: user.isVerified
+        isVerified: user.isVerified,
+        role: user.role
       },
       message: "Your Email is successfully verified."
     })
