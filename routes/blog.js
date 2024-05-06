@@ -15,15 +15,15 @@ const router = express.Router();
 
 router.post(
   "/upload-pdf",
-  isAuth,
-  isAdmin,
+  // isAuth,
+  // isAdmin,
   uploadPdf.single("pdf"),
   uploadBlogPdf
 );
 router.post(
   "/create",
-  isAuth,
-  isAdmin,
+  // isAuth,
+  // isAdmin,
   uploadImage.single("thumbnail"),
   parseData,
   validateBlog,
@@ -32,17 +32,17 @@ router.post(
 );
 router.patch(
   "/update-info/:blogId",
-  isAuth,
-  isAdmin,
-  parseData,
+  // isAuth,
+  // isAdmin,
+  // parseData,
   validateBlog,
   validate,
   updateBlog
 );
 router.patch(
   "/update-thumbnail/:blogId",
-  isAuth,
-  isAdmin,
+  // isAuth,
+  // isAdmin,
   uploadImage.single("thumbnail"),
   parseData,
   validateBlog,

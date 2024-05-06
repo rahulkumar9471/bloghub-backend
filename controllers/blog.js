@@ -212,7 +212,7 @@ exports.updateThumbnail = async (req, res) => {
 
     if (thumbnail_id) {
       const { result } = await cloudinary.uploader.destroy(thumbnail_id);
-      if (result !== "ok") {
+      if (result !== 'ok') {
         return sendError(res, "Could not remove image from cloud!", 404);
       }
     }
@@ -266,20 +266,32 @@ exports.deleteBlog = async (req, res) => {
     if (!blog) return sendError(res, "Blog not found!", 404);
 
     const thumbnail_id = blog.thumbnail?.public_id;
-    console.log(thumbnail_id);
+
     if (thumbnail_id) {
-      const { result } = cloudinary.uploader.destroy(thumbnail_id);
-      if (result !== "ok")
-        return sendError(res, "Could not remove image from cloud!");
+      try {
+        const { result } = await cloudinary.uploader.destroy(thumbnail_id);
+
+        if (result !== 'ok')
+          return sendError(res, "Could not remove image from cloud!");
+      } catch (error) {
+        console.error("Error removing image from cloud:", error);
+        return sendError(res, "An error occurred while removing image from cloud");
+      }
     }
 
     const pdf_id = blog.pdf?.public_id;
+
     if (!pdf_id) return sendError(res, "Could not find pdf in cloud!");
 
     if (pdf_id) {
-      const { result } = cloudinary.uploader.destroy(pdf_id);
-      if (result !== "ok")
-        return sendError(res, "Could not remove pdf from cloud!");
+      try {
+        const { result } = await cloudinary.uploader.destroy(pdf_id);
+        if (result !== 'ok')
+          return sendError(res, "Could not remove pdf from cloud!");
+      } catch (error) {
+        console.error("Error removing PDF from cloud:", error);
+        return sendError(res, "An error occurred while removing PDF from cloud");
+      }
     }
 
     await Blog.findByIdAndDelete(blogId);
